@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Создание приема пищи</title>
+  </head>
+  <body>
+    <h2>Добавление блюда в прием пищиы</h2>
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <input type="submit" value="Добавить">
+    </form>
+    <p><a href="{% url 'index' %}">Главная</a></p>
+  </body>
+</html>

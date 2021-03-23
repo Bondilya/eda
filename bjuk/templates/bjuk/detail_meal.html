@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Прием пищи - {{ meal.name }}</title>
+  </head>
+  <body>
+    <h3>Приём пищи {{ meal.name }} {{ meal.time }}</h3>
+    <p><a href="{% url 'change_meal' pk=meal.pk %}">Изменить</a> <a href="{% url 'delete_meal' pk=meal.pk %}">Удалить</a></p>
+  </body>
+</html>

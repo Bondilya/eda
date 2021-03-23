@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{ food.title }}</title>
+  </head>
+  <body>
+    <h3>{{ food.title }}</h3>
+    <p>Белки:{{ food.bel }}</p>
+    <p>Жиры:{{ food.jir }}</p>
+    <p>Углеводы:{{ food.ugl }}</p>
+    <p>Калории:{{ food.cal }}</p>
+    <nav>
+      <p><a href="{% url 'change_food' pk=food.pk %}">Изменить</a></p>
+      <p><a href="{% url 'delete_food' pk=food.pk %}">Удалить</a></p>
+      <p><a href="{% url 'index' %}">Главная</a></p>
+    </nav>
+  </body>
+</html>

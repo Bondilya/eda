@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Изменение блюда</title>
+  </head>
+  <body>
+    <h2>Изменение блюда</h2>
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <input type="submit" value="Изменить">
+    </form>
+    <p><a href="{% url 'index' %}">Главная</a></p>
+    <p><a href={% url 'delete_food' pk=food.pk %}>Удалить</a></p>
+  </body>
+</html>
