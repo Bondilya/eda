@@ -190,7 +190,6 @@ def user_activate(request, sign):
     else:
         template = 'main/activation_done.html'
         user.is_active = True
-        user.is_activated = True
         user.save()
     return render(request, template)
 

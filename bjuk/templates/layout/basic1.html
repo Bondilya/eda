@@ -1,9 +1,14 @@
+{% load bootstrap4 %}
 {% load static %}
 <!DOCTYPE html>
 <html>
     <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <title>{% block title %}Главная{% endblock %}</title>
+        {% bootstrap_css %}
         <link rel="stylesheet" type="text/css" href="{% static 'main/style.css' %}">
+        {% bootstrap_javascript jquery='slim' %}
     </head>
     <body class="container-fluid">
         <header class="mb-4">
@@ -30,6 +35,7 @@
             <nav class="col-md-auto nav flex-column border">
             </nav>
             <section class="col border py-2">
+                {% bootstrap_messages %}
                 {% block content %}
                 {% endblock %}
             </section>
