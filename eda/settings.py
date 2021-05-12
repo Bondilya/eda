@@ -27,19 +27,25 @@ DEBUG = False
 
 ALLOWED_HOSTS = []
 
-
+SESSION_SAVE_EVERY_REQUEST = True
+#SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
 # Application definition
 
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
+    'django.contrib.sites',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'bjuk.apps.BjukConfig',
     'bootstrap4',
-    'social_django',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.vk',
+
 ]
 
 MIDDLEWARE = [
@@ -113,19 +119,14 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 AUTHENTICATION_BACKENDS = (
-    'social_core.backends.google.GoogleOAuth2',
-    'social_core.backends.vk.VKOAuth2',
     'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
 )
 
-SOCIAL_AUTH_VK_APP_KEY = '7800309'
-SOCIAL_AUTH_VK_APP_SECRET = 'bpEWha7BlgymZ5Ndv9eB'
-SOCIAL_AUTH_VK_APP_USER_MODE = 2
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
-AUTH_USER_MODEL = 'bjuk.AdvUser'
 
 LOGIN_URL = 'accounts/login/'
 
@@ -149,3 +150,4 @@ TIME_FORMAT = 'H:i'
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+SITE_ID = 1

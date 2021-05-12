@@ -1,0 +1,6 @@
+{% extends "layout/basic.html" %}
+{% block title %}Перенос данных{% endblock %}
+{% block content%}
+<p>Перенести данные с гостевого аккаунта "{{ name }}"?</p>
+<p><a href="{% url 'data_transfer' %}">Да</a>   <a href="{% url 'data_delete' %}">Нет</a></p>
+{% endblock %}

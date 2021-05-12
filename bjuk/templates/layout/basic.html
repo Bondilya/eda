@@ -1,9 +1,13 @@
+{% load bootstrap4 %}
 {% load static %}
 <!DOCTYPE html>
 <html>
     <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <title>{% block title %}Главная{% endblock %}</title>
-        <link rel="stylesheet" type="text/css" href="{% static 'main/style.css' %}">
+        {% bootstrap_css %}
+        {% bootstrap_javascript jquery='slim' %}
     </head>
     <body class="container-fluid">
         <header class="mb-4">
@@ -15,14 +19,12 @@
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" data-toggle="dropdown"href="#" role="button" aria-haspopup="false" aria-expanded="false">{{user.username}}</a>
                     <div class="dropdown-menu">
-                        <a class="dropdown-item" href="{% url 'password_change' %}">Изменить пароль</a>
                         <a class="dropdown-item" href="{% url 'logout' %}">Выйти</a>
                     </div>
                 </li>
                 {% else %}
-                <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">Регистрация</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Вход</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'social:begin' 'vk-oauth2' %}">Войти через VK</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'account_signup' %}">Регистрация</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'account_login' %}">Вход</a></li>
                 {% endif %}
             </ul>
         </div>
@@ -30,6 +32,7 @@
             <nav class="col-md-auto nav flex-column border">
             </nav>
             <section class="col border py-2">
+                {% bootstrap_messages %}
                 {% block content %}
                 {% endblock %}
             </section>

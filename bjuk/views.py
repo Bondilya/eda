@@ -1,39 +1,107 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, Http404, HttpResponseRedirect
-from django.template import TemplateDoesNotExist
-from django.template.loader import get_template
+from django.core import serializers
+# from django.template import TemplateDoesNotExist
+# from django.template.loader import get_template
 from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
-from django.contrib.auth.views import PasswordResetView, PasswordResetDoneView
-from django.contrib.auth.views import PasswordResetConfirmView, PasswordResetCompleteView
-from django.views.generic.edit import UpdateView, CreateView, DeleteView
-from django.contrib.auth.models import AnonymousUser
-from django.contrib.messages.views import SuccessMessageMixin
+# from django.contrib.auth.views import PasswordResetView, PasswordResetDoneView
+# from django.contrib.auth.views import PasswordResetConfirmView, PasswordResetCompleteView
+from django.views.generic.edit import UpdateView, CreateView, DeleteView, FormView
+# from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy, reverse
-from django.views.generic.base import TemplateView
-from django.core.signing import BadSignature
-from django.contrib.auth import logout
+# from django.views.generic.base import TemplateView
+# from django.core.signing import BadSignature
+from django.contrib.auth import logout, login, authenticate
 from django.contrib import messages
+from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-import json
 from .models import *
 from .forms import *
+from .utilities import create_user_id
+from datetime import timedelta
+from django.db.models import Q
+from django.contrib.auth.models import Group
+import json
+from django.forms.models import model_to_dict
 
-@login_required
+
+@login_required()
 def index(request):
     foods = Food.objects.filter(author = request.user.pk)
     meals = Meal.objects.filter(author = request.user.pk)
     racions = Racion.objects.filter(author = request.user.pk)
     sum_bel=0;sum_jir=0;sum_ugl=0;sum_cal=0
-    for racion in Racion.objects.filter(author = request.user):
+    for racion in racions:
         b = (racion.gramm/100.0)*racion.food.bel
         j = (racion.gramm/100.0)*racion.food.jir
         u = (racion.gramm/100.0)*racion.food.ugl
         c = (racion.gramm/100.0)*racion.food.cal
         sum_bel+=b;sum_jir+=j;sum_ugl+=u;sum_cal+=c
-    context = {'sum':sum, 'foods':foods, 'meals':meals, 'racions':racions, 'sum_bel':sum_bel, 'sum_jir':sum_jir, 'sum_ugl':sum_ugl, 'sum_cal':sum_cal}
+    if 'username' in request.session and not request.user.groups.filter(name='guests'):
+        return redirect('data')
+    context = {'foods':foods, 'meals':meals, 'racions':racions, 'sum_bel':sum_bel, 'sum_jir':sum_jir, 'sum_ugl':sum_ugl, 'sum_cal':sum_cal}
     return render(request, 'bjuk/index.html',context)
+
+
+def demo_login(request):
+    if 'username' in request.session:
+        guest = User.objects.get(username=request.session['username'])
+        login(request, guest, backend='django.contrib.auth.backends.ModelBackend')
+        return redirect('index')
+    else:
+        q = Q(username__startswith = 'Guest') & Q(groups = 1)
+        if User.objects.filter(q):
+            last = User.objects.filter(q).last()
+            id = create_user_id(last.username)
+            guest = User.objects.create_user(username='Guest' + str(id), password='password'+ str(id))
+            guest.groups.add(1)
+        else:
+            guest = User.objects.create_user(username='Guest1', password='password1')
+            guest.groups.add(1)
+        login(request, guest, backend='django.contrib.auth.backends.ModelBackend')
+        #request.session.set_expiry(60)
+        #date_delete = User.date_joined + timedelta(hours=1)
+        return redirect('index')
+
+
+def test_session(request):
+    if 'demo_logged' in request.session:
+        return HttpResponse(request.session['username'])
+    else:
+        return HttpResponse(None)
+
+
+def logout_view(request):
+    if request.user.groups.filter(name='guests'):
+        username = request.user.username
+        logout(request)
+        request.session['username'] = username
+        #request.session.set_expiry(10)
+    else:
+        logout(request)
+    return redirect('account_login')
+
+
+def data(request):
+    return render(request, 'bjuk/data_transfer.html', {'name':request.session['username']})
+
+def data_transfer(request):
+    if 'username' in request.session:
+        u = User.objects.get(username=request.session['username'])
+        Racion.objects.filter(author = u).update(author = request.user)
+        Meal.objects.filter(author = u).update(author=request.user)
+        Food.objects.filter(author = u).update(author=request.user)
+        del request.session['username']
+        messages.add_message(request, messages.SUCCESS, 'Данные перенесены')
+    return redirect('index')
+
+
+def data_delete(request):
+    if 'username' in request.session:
+        del request.session['username']
+    return redirect('index')
 
 '''**************************************Еда***********************************************'''
 class ChangeFood(UpdateView, LoginRequiredMixin):
@@ -153,6 +221,7 @@ def DeleteRacion(request, pk):
 
 
 '''***********************************************Пользователь****************************************************************************'''
+'''
 class BJULoginView(LoginView):
     template_name = 'main/login.html'
     success_url = reverse_lazy('index')
@@ -169,7 +238,7 @@ class BJUPasswordChangeView(SuccessMessageMixin, LoginRequiredMixin, PasswordCha
 
 
 class RegisterUserView(CreateView):
-    model = AdvUser
+    model = User
     template_name = 'main/register_user.html'
     form_class = RegisterUserForm
     success_url = reverse_lazy('register_done')
@@ -184,7 +253,7 @@ def user_activate(request, sign):
         username = signer.unsign(sign)
     except BadSignature:
         return render(request, 'main/bad_signature.html')
-    user = get_object_or_404(AdvUser, username=username)
+    user = get_object_or_404(User, username=username)
     if user.is_activated:
         template = 'main/user_is_activated.html'
     else:
@@ -212,3 +281,4 @@ class BJUPasswordResetConfirmView(PasswordResetConfirmView):
 
 class BJUPasswordResetCompleteView(PasswordResetCompleteView):
     template_name = 'main/password_complete.html'
+'''

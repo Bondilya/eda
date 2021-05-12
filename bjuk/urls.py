@@ -16,18 +16,23 @@ urlpatterns = [
     path('delete_racion/<int:pk>/', DeleteRacion, name='delete_racion'),
     path('change_racion/<int:pk>/', ChangeRacion, name='change_racion'),
 
-    path('accounts/register/activate/<str:sign>/', user_activate, name='register_activate'),
-    path('accounts/register/done/', RegisterDoneView.as_view(), name='register_done'),
-    path('accounts/register/', RegisterUserView.as_view(), name='register'),
-    path('accounts/login/', BJULoginView.as_view(), name='login'),
+    path('accounts/demo_login/', demo_login, name='demo_login'),
 
-    path('accounts/password/reset/done/', BJUPasswordResetDoneView.as_view(), name='password_reset_done'),
-    path('accounts/password/reset/', BJUPasswordResetView.as_view(), name='password_reset'),
-    path('accounts/password/confirm/complete/', BJUPasswordResetCompleteView.as_view(), name='password_reset_complete'),
-    path('accounts/password/confirm/<uidb64>/<token>/', BJUPasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    path('test', test_session, name='test'),
 
-    path('accounts/password/change/', BJUPasswordChangeView.as_view(), name='password_change'),
-    path('accounts/logout/', BJULogoutView.as_view(), name='logout'),
+    #path('accounts/register/activate/<str:sign>/', user_activate, name='register_activate'),
+    #path('accounts/register/done/', RegisterDoneView.as_view(), name='register_done'),
+    #path('accounts/register/', RegisterUserView.as_view(), name='register'),
+    #path('accounts/login/', BJULoginView.as_view(), name='login'),
 
-    path('social/', include('social_django.urls', namespace='social')),
+    #path('accounts/password/reset/done/', BJUPasswordResetDoneView.as_view(), name='password_reset_done'),
+    #path('accounts/password/reset/', BJUPasswordResetView.as_view(), name='password_reset'),
+    #path('accounts/password/confirm/complete/', BJUPasswordResetCompleteView.as_view(), name='password_reset_complete'),
+    #path('accounts/password/confirm/<uidb64>/<token>/', BJUPasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+
+    #path('accounts/password/change/', BJUPasswordChangeView.as_view(), name='password_change'),
+    path('accounts/logout/', logout_view, name='logout'),
+    path('data_transfer/', data_transfer, name='data_transfer'),
+    path('data_delete/', data_delete, name='data_delete'),
+    path('data/', data, name='data'),
 ]

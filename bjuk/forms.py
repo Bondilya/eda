@@ -82,5 +82,5 @@ class RegisterUserForm(forms.ModelForm):
         return user
 
     class Meta:
-        model = AdvUser
+        model = User
         fields = ('username', 'email', 'password1', 'password2')

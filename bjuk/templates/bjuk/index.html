@@ -2,40 +2,53 @@
 
 {% block title %}Рацион питания{% endblock %}
 {% block content %}
+<p><a href="{% url 'test' %}">Тест</a></p>
     {% if foods %}
         <h1>Ваш рацион</h1>
         <h2>Блюда:</h2>
-        <div class="">
-          {% for food in foods %}
-              <h3><a href="{% url 'change_food' pk=food.pk %}">{{ food.title }}</a></h3>
-              <p> белков:{{ food.bel|floatformat }} жиров:{{ food.jir|floatformat }}  углеводов:{{ food.ugl|floatformat }}  Ккал:{{ food.cal|floatformat }}</p>
-          {% endfor %}
+          <table border="1", cellpadding='15', width='1000'>
+            <tr>
+              <th>Название</th>
+              <th>Белки</th>
+              <th>Жиры</th>
+              <th>Углеводы</th>
+              <th>Ккал</th>
+            </tr>
+            {% for food in foods %}
+            <tr>
+              <td><a href="{% url 'change_food' pk=food.pk %}">{{ food.title }}</a></td>
+              <td>{{ food.bel|floatformat }}</td>
+              <td>{{ food.jir|floatformat }}</td>
+              <td>{{ food.ugl|floatformat }}</td>
+              <td>{{ food.cal|floatformat }}</td>
+            </tr>
+            {% endfor %}
+          </table>
           <p><a href="{% url 'add_food' %}">Добавить блюдо</a></p>
           {% else %}
               <p>Добавьте блюда в свой рацион </p>
               <p><a href="{% url 'add_food' %}">Добавить блюдо</a></p>
           {% endif %}
-        </div>
     {% if meals %}
-        <p><a href="{% url 'add_meal' %}">Создать прием пищи<a></p>
+        <p><a href="{% url 'add_meal' %}">Создать прием пищи</a></p>
           {% if foods %}
-            <p><a href={% url 'add_racion' %}>Добавить блюдо в прием пищи</a></p>
+            <p><a href="{% url 'add_racion' %}">Добавить блюдо в прием пищи</a></p>
           {% endif %}
         {% for meal in meals %}
         <h2><a href="{% url 'change_meal' pk=meal.pk %}">{{ meal.name }}</a> {% if meal.time %} {{ meal.time }} {% endif %}</h2>
         {% if racions %}
             {% for racion in racions %}
               {% if racion.meal.name == meal.name %}
-                <p><a href="{% url 'change_racion' pk=racion.pk %}">{{ racion.food }}</a> - {{ racion.gramm }}гр. - белков:{{ racion.bel|floatformat }} жиров:{{ racion.jir|floatformat }} углеводов:{{ racion.ugl|floatformat }} калорий:{{ racion.cal|floatformat }}</p>
+                <p><a href="{% url 'change_racion' pk=racion.pk %}">{{ racion.food }}</a> - {{ racion.gramm }}гр. - Белков: {{ racion.bel|floatformat }}  Жиров: {{ racion.jir|floatformat }}  Углеводов: {{ racion.ugl|floatformat }}  Ккал: {{ racion.cal|floatformat }}</p>
               {% endif %}
             {% endfor %}
         {% endif %}
         {% endfor %}
         {% if racions %}
-        <h3>Всего:</h3><p>Белков: {{ sum_bel|floatformat }} Жиров: {{ sum_jir|floatformat }} Углеводов: {{ sum_ugl|floatformat }} Ккал: {{ sum_cal|floatformat }}</p>
+        <h3>Всего:</h3><p>Белков: {{ sum_bel|floatformat }}  Жиров: {{ sum_jir|floatformat }}  Углеводов: {{ sum_ugl|floatformat }}  Ккал: {{ sum_cal|floatformat }}</p>
         {% endif %}
     {% else %}
         <p>Создайте прием пищи</p>
-        <p><a href="{% url 'add_meal' %}">Создать прием пищи<a></p>
+        <p><a href="{% url 'add_meal' %}">Создать прием пищи</a></p>
     {% endif %}
 {% endblock %}

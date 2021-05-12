@@ -1,20 +1,39 @@
 {% extends "layout/basic.html" %}
 
+{% load i18n %}
+{% load account socialaccount %}
 {% load bootstrap4 %}
 
 {% block title %}Вход{% endblock %}
 
 {% block content %}
-<h2>Вход</h2>
-{% if user.is_authenticated %}
-<p>Вы уже выполнили вход.</p>
-{% else %}
-<form method="post">
-    {% csrf_token %}
-    {% bootstrap_form form layout='horizontal' %}
-    <input type="hidden" name="next" value="{{ next }}">
-    {% buttons submit='Войти' %}{% endbuttons %}
-</form>
-<p><a href="{% url 'password_reset' %}">Сброс пароля</a></p>
-{% endif %}
+  <h2>Вход</h2>
+  {% get_providers as socialaccount_providers %}
+  {% if user.is_authenticated %}
+    <p>Вы уже выполнили вход.</p>
+    {% else %}
+      {% if socialaccount_providers %}
+      <p>{% blocktrans with site.name as site_name %}Please sign in with one
+                  of your existing third party accounts. Or, <a href="{{ signup_url }}">sign up</a>
+                  for a {{ site_name }} account and sign in below:{% endblocktrans %}</p>
+
+              <div class="socialaccount_ballot">
+
+                  <ul class="socialaccount_providers">
+                      {% include "socialaccount/snippets/provider_list.html" with process="login" %}
+                  </ul>
+
+                  <div class="login-or">{% trans 'or' %}</div>
+              </div>
+
+              {% include "socialaccount/snippets/login_extra.html" %}
+      {% endif %}
+      <form method="post">
+          {% csrf_token %}
+          {% bootstrap_form form layout='horizontal' %}
+          <input type="hidden" name="next" value="{{ next }}">
+          {% buttons submit='Войти' %}{% endbuttons %}
+      </form>
+      <p><a href="{% url 'password_reset' %}">Сброс пароля</a></p>
+  {% endif %}
 {% endblock %}
