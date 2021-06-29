@@ -60,9 +60,7 @@ def demo_login(request):
         else:
             guest = User.objects.create_user(username='Guest1', password='password1')
             guest.groups.add(1)
-        login(request, guest, backend='django.contrib.auth.backends.ModelBackend')
-        #request.session.set_expiry(60)
-        #date_delete = User.date_joined + timedelta(hours=1)
+        login(request, guest, backend='django.contrib.auth.backend.ModelBackend')
         return redirect('index')
 
 
@@ -78,7 +76,6 @@ def logout_view(request):
         username = request.user.username
         logout(request)
         request.session['username'] = username
-        #request.session.set_expiry(10)
     else:
         logout(request)
     return redirect('account_login')
@@ -93,6 +90,7 @@ def data_transfer(request):
         Racion.objects.filter(author = u).update(author = request.user)
         Meal.objects.filter(author = u).update(author=request.user)
         Food.objects.filter(author = u).update(author=request.user)
+        u.delete()
         del request.session['username']
         messages.add_message(request, messages.SUCCESS, 'Данные перенесены')
     return redirect('index')
@@ -100,8 +98,11 @@ def data_transfer(request):
 
 def data_delete(request):
     if 'username' in request.session:
+        u = User.objects.get(username=request.session['username'])
+        u.delete()
         del request.session['username']
     return redirect('index')
+
 
 '''**************************************Еда***********************************************'''
 class ChangeFood(UpdateView, LoginRequiredMixin):

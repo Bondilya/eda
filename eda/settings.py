@@ -23,9 +23,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'g290o-i5s9p%)ofm=6zrs+weolc-+_f66&847h8)@ki)m#lx*)'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 SESSION_SAVE_EVERY_REQUEST = True
 #SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
@@ -94,8 +94,11 @@ EMAIL_HOST_PASSWORD = 'aezakmi+wanrltw'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME' : 'eda',
+        'USER' : 'root',
+        'PASSWORD' : 'aezakmi+wanrltw',
+        'HOST' : 'localhost',
     }
 }
 
@@ -134,7 +137,7 @@ LOGIN_REDIRECT_URL = 'index'
 
 LANGUAGE_CODE = 'ru-ru'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 
